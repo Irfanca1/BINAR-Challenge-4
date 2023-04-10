@@ -1,0 +1,95 @@
+body {
+    margin: 0;
+    padding: 0;
+    left: 0;
+    right: 0;
+    box-sizing: border-box;
+    background-color: #f1efef !important;
+}
+
+.navbar {
+    background-color: #fff;
+    width: 95%;
+    left: 4.4rem;
+}
+
+.navbar form .search {
+    position: relative;
+    left: 75px;
+    top: 5px;
+    font-weight: 300;
+}
+
+.navbar-brand {
+    width: 100px;
+    height: 34px;
+    background-color: #CFD4ED;
+    margin-left: 1rem;
+}
+
+.hamburger {
+    margin-left: 6rem;
+}
+
+#sidebar {
+    height: 902px;
+    background-color: #0D28A6;
+    width: 70px;
+    position: absolute;
+    top: -5rem;
+    left: 0px;
+}
+
+#sidebarMenu {
+    top: 5rem;
+    height: 902px;
+    background-color: #fff;
+}
+
+#sidebar .navbar-brand-sidebar {
+    width: 34px;
+    height: 34px;
+    background-color: #CFD4ED;
+}
+
+#sidebar ul li.cars {
+    height: 70px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+#sidebar2 ul li.list-cars {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+#sidebar ul li a i {
+    font-size: 25px;
+}
+
+#sidebar ul li a p.dashboard {
+    position: absolute;
+    font-size: 12px;
+    left: 5px;
+}
+
+#sidebar ul li a p.cars {
+    position: absolute;
+    font-size: 12px;
+    left: 15px;
+}
+
+.circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-color: #CFD4ED;
+}
+
+.btn-add-car {
+    background-color: #0D28A6;
+}
+
+.main {
+    position: relative;
+    left: 20.1rem;
+    top: 8rem;
+}
