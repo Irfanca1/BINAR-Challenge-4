@@ -39,7 +39,7 @@ router.post('/posts', (req, res) => {
         } else {
             // Kirim response berupa data mobil yang berhasil ditambahkan
             res.status(201).json({
-                status: 'success',
+                status: true,
                 message: 'Data mobil berhasil ditambahkan',
                 data: result.rows[0]
             });
@@ -65,7 +65,7 @@ router.post('/update/:id', (req, res) => {
         } else {
             // Kirim response berupa data mobil yang berhasil ditambahkan
             res.status(201).json({
-                status: 'success',
+                status: true,
                 message: 'Update Data Successfully',
                 data: result.rows[0]
             });
@@ -73,7 +73,7 @@ router.post('/update/:id', (req, res) => {
     });
 })
 
-router.get('/deleteCar/:id', (req, res) => {
+router.get('/delete/:id', (req, res) => {
     let id = req.params.id
     connection.query(`DELETE FROM "Cars" WHERE id=${id}`, (err, rows) => {
         if (err) {
