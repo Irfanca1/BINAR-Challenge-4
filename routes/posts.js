@@ -3,9 +3,6 @@ const router = express.Router()
 
 const connection = require('../config/database')
 
-const { body, validationResult } = require('express-validator')
-const { now } = require('mongoose')
-
 router.get('/', function (req, res) {
     connection.query('SELECT * FROM "Cars" ORDER BY id ASC', (err, results) => {
         if (err) {
@@ -16,55 +13,64 @@ router.get('/', function (req, res) {
         } else {
             return res.status(200).json({
                 status: true,
-                message: 'List Data Posts',
+                message: 'List Data Cars',
                 data: results.rows
             })
         }
     })
 })
 
-router.post('/addCar', [
-    // VALIDATION
-    body('nama_mobil').notEmpty(),
-    body('harga_perhari').notEmpty(),
-    body('ukuran').notEmpty(),
-    // body('createdAt'),
-    // body('updatedAt'),
-    // body('gambar'),
-], (req, res) => {
-    const errors = validationResult(req)
+router.post('/posts', (req, res) => {
+    const { nama_mobil, harga_perhari, ukuran } = req.body;
+    const gambar = 'default.jpg'
 
-    if (!errors.isEmpty()) {
-        return res.status(422).json({
-            errors: errors.array()
-        })
-    }
+    const query = `INSERT INTO "Cars" (nama_mobil, harga_perhari, ukuran, gambar)
+                 VALUES ($1, $2, $3, $4)`;
 
-    // DEFINE FORM DATA
-    let formData = {
-        nama_mobil: req.body.nama,
-        harga_perhari: req.body.sewa,
-        ukuran: req.body.ukuran
-        // createddAt: now(),
-        // updatedAt: now()
-    }
+    const values = [nama_mobil, harga_perhari, ukuran, gambar];
 
-    // INSERT QUERY
-    connection.query('INSERT INTO "Cars" (nama_mobil, harga_perhari, ukuran)', formData, function (err, rows) {
-        //if(err) throw err
+    connection.query(query, values, (err, result) => {
         if (err) {
-            return res.status(500).json({
+            console.error(err);
+            res.status(500).json({
                 status: false,
-                message: 'Internal Server Error',
-            })
+                message: 'Terjadi kesalahan saat menambahkan data mobil'
+            });
         } else {
-            return res.status(201).json({
-                status: true,
-                message: 'Insert Data Successfully',
-                data: rows[0]
-            })
+            // Kirim response berupa data mobil yang berhasil ditambahkan
+            res.status(201).json({
+                status: 'success',
+                message: 'Data mobil berhasil ditambahkan',
+                data: result.rows[0]
+            });
         }
-    })
+    });
+})
+
+router.post('/update/:id', (req, res) => {
+    const { nama_mobil, harga_perhari, ukuran } = req.body;
+    let id = req.params.id
+
+    const query = `UPDATE "Cars" SET "nama_mobil"=$1, "harga_perhari"=$2, "ukuran"=$3 WHERE id=${id}`;
+
+    const values = [nama_mobil, harga_perhari, ukuran];
+
+    connection.query(query, values, (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({
+                status: false,
+                message: 'Internal Server Error'
+            });
+        } else {
+            // Kirim response berupa data mobil yang berhasil ditambahkan
+            res.status(201).json({
+                status: 'success',
+                message: 'Update Data Successfully',
+                data: result.rows[0]
+            });
+        }
+    });
 })
 
 router.get('/deleteCar/:id', (req, res) => {

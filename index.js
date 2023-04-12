@@ -6,6 +6,7 @@ const path = require('path')
 const accounting = require('accounting')
 const swal = require('sweetalert2')
 const dayjs = require('dayjs')
+const fs = require('fs')
 const app = express()
 const PORT = process.env.PORT || 5000
 
@@ -37,12 +38,14 @@ const upload = multer({ storage: storage })
 const postRouter = require('./routes/posts')
 app.use('/api/car', postRouter)
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
     const data = {
         title: 'Halaman Utama',
         message: 'Ini adalah halaman Utama'
     }
-    Cars.findAll()
+    await Cars.findAll({
+        order: [['id', 'ASC']]
+    })
         .then(cars => {
             res.render('index', { data, cars })
         })
@@ -55,12 +58,12 @@ app.get('/add', (req, res) => {
     res.render('add', { data })
 })
 
-app.post('/car', upload.single('gambar'), (req, res, next) => {
-    Cars.create({
+app.post('/car', upload.single('gambar'), async (req, res) => {
+    await Cars.create({
         nama_mobil: req.body.nama,
         harga_perhari: req.body.sewa,
         ukuran: req.body.ukuran,
-        gambar: req.file.filename
+        gambar: req.file ? req.file.filename : 'default.jpg'
     })
         .then(() => {
             res.redirect('/add?success=true&&message=Data Created')
@@ -70,11 +73,11 @@ app.post('/car', upload.single('gambar'), (req, res, next) => {
         })
 })
 
-app.get('/editCar/(:id)/edit', (req, res) => {
+app.get('/editCar/(:id)/edit', async (req, res) => {
     const data = {
         title: 'Edit Car'
     }
-    Cars.findOne({
+    await Cars.findOne({
         where: { id: req.params.id }
     })
         .then(car => {
@@ -93,25 +96,40 @@ app.post('/editCar/(:id)', upload.single('gambar'), async (req, res) => {
         return res.status(404).send('Car not found')
     }
 
+    const oldGambar = car.gambar
+
     car.nama_mobil = req.body.nama
     car.harga_perhari = req.body.sewa
     car.ukuran = req.body.ukuran
-    car.gambar = req.file.filename
+    car.gambar = req.file ? req.file.filename : 'default.jpg'
     await car.save()
+
+    if (oldGambar !== 'default.jpg' && fs.existsSync(`public/images/${oldGambar}`)) {
+        fs.unlinkSync(`public/images/${oldGambar}`)
+    }
 
     res.redirect('/?success=true&&message=Data Edit')
 })
 
-app.get('/delete/(:id)', (req, res) => {
+app.get('/delete/(:id)', async (req, res) => {
+    const car = await Cars.findOne({
+        where: { id: req.params.id }
+    })
+    if (!car) {
+        return res.status(404).send('Car not found')
+    }
+
+    const gambarDelete = car.gambar
+
     Cars.destroy({
         where: { id: req.params.id }
-    },)
-        .then(() => {
-            res.redirect('/')
-        })
-        .catch(err => {
-            res.status(422).json("Can't delete car")
-        })
+    })
+
+    if (gambarDelete !== 'default.jpg' && fs.existsSync(`public/images/${gambarDelete}`)) {
+        fs.unlinkSync(`public/images/${gambarDelete}`)
+    }
+
+    res.redirect('/')
 })
 
 app.listen(PORT, () => {
