@@ -31,9 +31,10 @@
                                 class="text-danger">*</span></label>
                         <div class="col-sm-10">
                             <select name="ukuran" class="form-select" id="ukuran">
-                                <option value="small">Small</option>
-                                <option value="medium">Medium</option>
-                                <option value="large">Large</option>
+
+                                <option value="small" <%=car.ukuran==='small' ? 'selected' : '' %>>Small</option>
+                                <option value="medium" <%=car.ukuran==='medium' ? 'selected' : '' %>>Medium</option>
+                                <option value="large" <%=car.ukuran==='large' ? 'selected' : '' %>>Large</option>
                             </select>
                         </div>
                     </div>
@@ -44,7 +45,8 @@
                             <input type="file" class="form-control" value="<%= car.gambar %>" name="gambar" id="gambar">
                         </div>
                     </div>
-                    <button class="btn btn-outline-primary d-inline" style="margin-top: 10rem;">Cancel</button>
+                    <button class="btn btn-outline-primary d-inline" type="reset"
+                        style="margin-top: 10rem;">Cancel</button>
                     <button class="btn btn-primary d-inline" style="margin-top: 10rem;">Save</button>
                 </form>
             </main>
